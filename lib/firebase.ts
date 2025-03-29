@@ -4,12 +4,13 @@ import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY!,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN!,
-  projectId: process.env.FIREBASE_PROJECT_ID!,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.FIREBASE_APP_ID!,
+  apiKey: 'AIzaSyCVsFx06sHAjR5et9-yES443TyHjfPqpZQ',
+  authDomain: 'my-crypto-tool.firebaseapp.com',
+  projectId: 'my-crypto-tool',
+  storageBucket: 'my-crypto-tool.firebasestorage.app',
+  messagingSenderId: '342808572885',
+  appId: '1:342808572885:web:1a11192b1950d3d68b435c',
+  measurementId: 'G-XN76S896WT',
 }
 
 // ✅ app を一度だけ定義して export！
