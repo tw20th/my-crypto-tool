@@ -34,3 +34,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase (if used)
+.firebase/
+firestore.*
+
+# env (明示的に)
+.env
+.env.*.local
+.env.production
+.env.development

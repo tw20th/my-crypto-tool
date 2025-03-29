@@ -8,7 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
-import { Timestamp } from 'firebase/firestore'
+import { PortfolioHistory } from '@/types/portfolio'
 
 const calculateMovingAverage = (
   data: { date: string; value: number }[],
@@ -22,12 +22,6 @@ const calculateMovingAverage = (
       movingAvg: parseFloat(avg.toFixed(2)),
     }
   })
-}
-
-export type PortfolioHistory = {
-  id: string
-  createdAt: Timestamp
-  totalValue: number
 }
 
 type Props = {
