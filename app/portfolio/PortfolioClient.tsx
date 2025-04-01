@@ -43,6 +43,7 @@ export default function PortfolioClient({ coins }: Props) {
 
   // ✅ ログイン状態の確認とリダイレクト
   useEffect(() => {
+    console.log('🔍 ユーザー情報:', user)
     if (user === null) {
       router.push('/login')
     }
