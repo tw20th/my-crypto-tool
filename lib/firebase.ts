@@ -11,7 +11,6 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 }
-console.log('🔥 本番 API KEY:', process.env.NEXT_PUBLIC_FIREBASE_API_KEY)
 
 // ✅ app を一度だけ定義して export！
 export const app = getApps().length ? getApp() : initializeApp(firebaseConfig)

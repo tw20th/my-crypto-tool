@@ -6,11 +6,11 @@ import { app } from './firebase'
 const auth = getAuth(app)
 
 export function useUser() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null | undefined>(undefined)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
-      console.log('🧩 Firebase onAuthStateChanged:', u) // ← ✅ ここでログ出力！
+      console.log('🧩 Firebase onAuthStateChanged:', u)
       setUser(u)
     })
 

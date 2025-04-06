@@ -1,3 +1,4 @@
+// app/page.tsx（トップページ）
 'use client'
 
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
@@ -5,6 +6,7 @@ import { app } from '@/lib/firebase'
 import { useRouter } from 'next/navigation'
 import PortfolioDemo from '@/components/Portfolio/PortfolioDemo'
 import PortfolioAlertDemo from '@/components/Portfolio/PortfolioAlertDemo'
+import Button from '@/components/ui/Button' // ← 追加！
 
 export default function Home() {
   const router = useRouter()
@@ -15,7 +17,7 @@ export default function Home() {
 
     try {
       await signInWithPopup(auth, provider)
-      router.push('/portfolio') // ログイン後に遷移
+      router.push('/portfolio')
     } catch (error) {
       console.error('❌ ログイン失敗:', error)
     }
@@ -31,12 +33,7 @@ export default function Home() {
       </p>
 
       <div className="text-center">
-        <button
-          onClick={handleLogin}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Googleでログイン
-        </button>
+        <Button onClick={handleLogin}>Googleでログイン</Button>
       </div>
 
       <section>

@@ -12,7 +12,7 @@ import {
   Timestamp,
 } from 'firebase/firestore'
 import { getFilteredPortfolioHistory } from '@/lib/getFilteredPortfolioHistory'
-import { FilterType } from '@/app/portfolio/PortfolioClient'
+import { FilterType } from '@/components/Portfolio/PortfolioClient'
 
 type PortfolioHistory = {
   id: string

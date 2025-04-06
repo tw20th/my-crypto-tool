@@ -5,6 +5,8 @@ import { Alert } from '@/types/alert'
 import { db } from '@/lib/firebase'
 import { useUser } from '@/lib/auth'
 import { doc, deleteDoc, updateDoc } from 'firebase/firestore'
+import Card from '@/components/ui/Card' // ✅ 追加
+import Input from '@/components/ui/Input'
 
 type Props = {
   alert: Alert
@@ -31,39 +33,40 @@ export default function AlertItem({ alert, onDeleted }: Props) {
   }
 
   return (
-    <div className="flex items-center justify-between border p-2 rounded bg-white">
+    <Card variant="outlined" padding="sm">
       {isEditing ? (
-        <div className="flex-1 space-x-2">
-          <input
+        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+          <Input
             type="number"
             value={price}
             onChange={(e) => setPrice(Number(e.target.value))}
-            className="border px-2 py-1 rounded"
           />
-          <button
-            onClick={handleUpdate}
-            className="text-blue-600 text-sm hover:underline"
-          >
-            保存
-          </button>
-          <button
-            onClick={() => {
-              setIsEditing(false)
-              setPrice(alert.price)
-            }}
-            className="text-gray-500 text-sm hover:underline"
-          >
-            キャンセル
-          </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={handleUpdate}
+              className="text-blue-600 text-sm hover:underline"
+            >
+              保存
+            </button>
+            <button
+              onClick={() => {
+                setIsEditing(false)
+                setPrice(alert.price)
+              }}
+              className="text-gray-500 text-sm hover:underline"
+            >
+              キャンセル
+            </button>
+          </div>
         </div>
       ) : (
-        <>
-          <span>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+          <span className="mb-2 sm:mb-0">
             {alert.coinId} が{' '}
             {alert.condition === 'over' ? '上回った' : '下回った'}{' '}
             {alert.price.toLocaleString()} USD
           </span>
-          <div className="flex items-center space-x-2">
+          <div className="flex space-x-2">
             <button
               onClick={() => setIsEditing(true)}
               className="text-blue-500 text-sm hover:underline"
@@ -77,8 +80,8 @@ export default function AlertItem({ alert, onDeleted }: Props) {
               削除
             </button>
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </Card>
   )
 }

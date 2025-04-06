@@ -1,12 +1,31 @@
 'use client'
 
+import { useEffect } from 'react'
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import { Coin } from '@/types/coin'
 import { PortfolioItem } from '@/lib/portfolio'
+import Card from '@/components/ui/Card'
+import { Tooltip } from 'react-tooltip'
+import 'react-tooltip/dist/react-tooltip.css'
 
 type Props = {
   coins: Coin[]
   portfolio: PortfolioItem[]
   onAmountChange: (coinId: string, rawValue: string) => void
+}
+
+function AnimatedNumber({ value }: { value: number }) {
+  const count = useMotionValue(0)
+  const rounded = useTransform(count, (latest) =>
+    Math.floor(latest).toLocaleString()
+  )
+
+  useEffect(() => {
+    const controls = animate(count, value, { duration: 0.6 })
+    return controls.stop
+  }, [value, count]) // 'count' を依存リストに追加
+
+  return <motion.span>{rounded}</motion.span>
 }
 
 export default function PortfolioCoinList({
@@ -16,7 +35,6 @@ export default function PortfolioCoinList({
 }: Props) {
   return (
     <div className="space-y-4">
-      {/* カード表示 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {coins.map((coin) => {
           const item = portfolio.find((p) => p.coinId === coin.id)
@@ -25,25 +43,16 @@ export default function PortfolioCoinList({
           const isEmpty = item === undefined
 
           return (
-            <div
-              key={coin.id}
-              className={`p-4 rounded-2xl border transition ${
-                isEmpty
-                  ? 'bg-gray-50 opacity-60'
-                  : 'bg-white shadow hover:shadow-md'
-              }`}
-            >
+            <Card key={coin.id}>
               <h2 className="font-bold text-lg mb-1">
                 {coin.name}{' '}
-                <span className="text-gray-500">
+                <span className="text-gray-500 dark:text-gray-400">
                   ({coin.symbol.toUpperCase()})
                 </span>
               </h2>
+
               <p className="text-sm text-gray-600 mb-1">
-                現在価格:{' '}
-                <span className="font-medium">
-                  ${coin.current_price.toLocaleString()}
-                </span>
+                現在価格: $<AnimatedNumber value={coin.current_price} />
               </p>
 
               <label className="block mb-2 text-sm text-gray-700">
@@ -56,19 +65,36 @@ export default function PortfolioCoinList({
                 />
               </label>
 
-              <p className="text-base font-semibold text-blue-700">
-                評価額: $
-                {value.toLocaleString(undefined, {
-                  maximumFractionDigits: 2,
-                })}
+              <p
+                className="text-base font-semibold text-blue-700"
+                data-tooltip-id="valuation"
+                data-tooltip-content="現在価格 × 保有数で算出される価値です"
+              >
+                評価額: $<AnimatedNumber value={value} />
               </p>
+
+              <Tooltip id="valuation" />
+
+              {/* 👇 ここが追加した部分：24h変動率の表示 */}
+              {coin.price_change_percentage_24h !== undefined && (
+                <p
+                  className={`text-sm mt-1 ${
+                    coin.price_change_percentage_24h >= 0
+                      ? 'text-green-600'
+                      : 'text-red-600'
+                  }`}
+                >
+                  {coin.price_change_percentage_24h >= 0 ? '▲' : '▼'}{' '}
+                  {Math.abs(coin.price_change_percentage_24h).toFixed(2)}%
+                </p>
+              )}
 
               {isEmpty && (
                 <p className="text-xs text-gray-500 mt-1">
                   ※ 未追加の状態です（追加すると保存されます）
                 </p>
               )}
-            </div>
+            </Card>
           )
         })}
       </div>

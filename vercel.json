@@ -1,0 +1,9 @@
+{
+  "schedule": {
+    "functions": {
+      "api/summarize-news/route.ts": {
+        "cron": "0 8 * * *"
+      }
+    }
+  }
+}

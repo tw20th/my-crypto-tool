@@ -11,18 +11,19 @@ import {
 
 import { Coin } from '@/types/coin'
 import { PortfolioItem } from '@/lib/portfolio'
+import Card from '@/components/ui/Card'
 
 const COLORS = [
-  '#4ade80', // green-400
-  '#60a5fa', // blue-400
-  '#facc15', // yellow-400
-  '#f87171', // red-400
-  '#a78bfa', // purple-400
-  '#34d399', // emerald-400
-  '#fb923c', // orange-400
-  '#f472b6', // pink-400
-  '#38bdf8', // sky-400
-  '#c084fc', // violet-400
+  '#4ade80',
+  '#60a5fa',
+  '#facc15',
+  '#f87171',
+  '#a78bfa',
+  '#34d399',
+  '#fb923c',
+  '#f472b6',
+  '#38bdf8',
+  '#c084fc',
 ]
 
 type Props = {
@@ -42,17 +43,20 @@ export default function PortfolioPieChart({ coins, portfolio = [] }: Props) {
     })
     .filter(Boolean)
 
-  const total = data.reduce((acc, item) => {
-    if (!item) return acc
-    return acc + item.value
-  }, 0)
+  const total = data.reduce((acc, item) => acc + (item?.value || 0), 0)
 
   if (data.length === 0)
-    return <p className="text-gray-500">表示できるデータがありません</p>
+    return (
+      <Card>
+        <p className="text-gray-500 dark:text-gray-400">
+          表示できるデータがありません
+        </p>
+      </Card>
+    )
 
   return (
-    <div className="w-full">
-      <h2 className="text-lg font-semibold mb-2">📊 資産の内訳</h2>
+    <Card variant="outlined" padding="lg">
+      <h2 className="text-lg font-semibold mb-4">📊 資産の内訳</h2>
       <div className="w-full h-80">
         <ResponsiveContainer>
           <PieChart>
@@ -84,6 +88,6 @@ export default function PortfolioPieChart({ coins, portfolio = [] }: Props) {
           </PieChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </Card>
   )
 }

@@ -2,14 +2,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { db } from '@/lib/firebase'
 import { useUser } from '@/lib/auth'
 import { Coin } from '@/types/coin'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, updateDoc, doc } from 'firebase/firestore'
 import { Alert } from '@/types/alert'
 
 export const useAlerts = (coins: Coin[]) => {
   const { user } = useUser()
   const [matchedAlerts, setMatchedAlerts] = useState<Alert[]>([])
 
-  // ✅ ここに書く！
   const sendAlertEmail = async (email: string, message: string) => {
     await fetch('/api/send-alert', {
       method: 'POST',
@@ -31,24 +30,34 @@ export const useAlerts = (coins: Coin[]) => {
       ...(doc.data() as Omit<Alert, 'id'>),
     }))
 
-    const matched = alerts.filter((alert) => {
+    const matched: Alert[] = []
+
+    // ✅ 条件チェックと更新を分けて実行！
+    for (const alert of alerts) {
       const coin = coins.find((c) => c.id === alert.coinId)
-      if (!coin) return false
+      if (!coin) continue
 
       const isMatch =
         (alert.condition === 'over' && coin.current_price > alert.price) ||
         (alert.condition === 'under' && coin.current_price < alert.price)
 
-      // ✅ 条件を満たしたらメールを送信
-      if (isMatch && user.email) {
+      if (isMatch && user.email && !alert.notified) {
         const message = `${alert.coinId} が ${
           alert.condition === 'over' ? '上回った' : '下回った'
         } ${alert.price} USD`
-        sendAlertEmail(user.email, message)
-      }
 
-      return isMatch
-    })
+        await sendAlertEmail(user.email, message)
+
+        // ✅ Firestoreを更新して「通知済み」に
+        await updateDoc(doc(db, 'users', user.uid, 'alerts', alert.id), {
+          notified: true,
+        })
+
+        matched.push(alert)
+      } else if (isMatch) {
+        matched.push(alert) // 通知済みでもアラート表示には追加
+      }
+    }
 
     setMatchedAlerts(matched)
   }, [user, coins])
