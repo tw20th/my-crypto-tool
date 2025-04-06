@@ -1,0 +1,18 @@
+name: Summarize News Cron
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # 毎日 8 時に実行
+  workflow_dispatch: # 手動でトリガーするオプションも追加
+
+jobs:
+  summarize-news:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run summarize-news API
+        run: |
+          curl -X POST https://my-crypto-tool.vercel.app/api/summarize-news
