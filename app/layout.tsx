@@ -7,6 +7,7 @@ import localFont from 'next/font/local'
 import './globals.css'
 import ThemeWrapper from '@/components/ThemeWrapper'
 import { Toaster } from 'react-hot-toast'
+import Script from 'next/script'
 
 const geistSans = localFont({
   src: '/fonts/GeistVF.woff', // 修正後のパス
@@ -32,6 +33,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
+      <head>
+        {/* Google Analytics */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-XN76S896WT"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-XXXXXXXXXX');
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900 dark:bg-gray-100`}
       >
