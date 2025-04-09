@@ -1,0 +1,15 @@
+name: Summarize News
+
+on:
+  workflow_dispatch:
+
+jobs:
+  summarize-news:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run save-news
+        run: curl -X POST https://your-vercel-site.vercel.app/api/save-news
+
+      - name: Run summarize-news
+        run: curl -X POST https://your-vercel-site.vercel.app/api/summarize-news

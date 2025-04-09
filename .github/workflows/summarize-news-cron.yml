@@ -2,7 +2,7 @@ name: Summarize News Cron
 
 on:
   schedule:
-    - cron: '0 8 * * *' # 毎日 8 時に実行
+    - cron: '0 23 * * *' # JSTの8時 = UTCの23時
   workflow_dispatch: # 手動でトリガーするオプションも追加
 
 jobs:

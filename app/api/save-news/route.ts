@@ -10,8 +10,16 @@ export async function POST() {
     const batch = adminDb.batch()
 
     for (const article of news) {
+      const { title, url, publishedAt, source } = article
       const ref = adminDb.collection('news').doc()
-      batch.set(ref, { id: ref.id, ...article })
+      batch.set(ref, {
+        id: ref.id,
+        title,
+        url,
+        publishedAt,
+        source,
+        // 🔥 summary をあえて含めない！これが超重要
+      })
     }
 
     await batch.commit()

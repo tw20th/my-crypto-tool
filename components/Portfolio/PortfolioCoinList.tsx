@@ -23,7 +23,7 @@ function AnimatedNumber({ value }: { value: number }) {
   useEffect(() => {
     const controls = animate(count, value, { duration: 0.6 })
     return controls.stop
-  }, [value, count]) // 'count' を依存リストに追加
+  }, [value, count])
 
   return <motion.span>{rounded}</motion.span>
 }
@@ -51,11 +51,19 @@ export default function PortfolioCoinList({
                 </span>
               </h2>
 
-              <p className="text-sm text-gray-600 mb-1">
+              <p
+                className="text-sm text-gray-600 mb-1"
+                data-tooltip-id="global-tooltip"
+                data-tooltip-content="この瞬間の仮想通貨の市場価格です"
+              >
                 現在価格: $<AnimatedNumber value={coin.current_price} />
               </p>
 
-              <label className="block mb-2 text-sm text-gray-700">
+              <label
+                className="block mb-2 text-sm text-gray-700"
+                data-tooltip-id="global-tooltip"
+                data-tooltip-content="あなたが持っているこのコインの数量です"
+              >
                 保有数:
                 <input
                   type="number"
@@ -67,15 +75,12 @@ export default function PortfolioCoinList({
 
               <p
                 className="text-base font-semibold text-blue-700"
-                data-tooltip-id="valuation"
+                data-tooltip-id="global-tooltip"
                 data-tooltip-content="現在価格 × 保有数で算出される価値です"
               >
                 評価額: $<AnimatedNumber value={value} />
               </p>
 
-              <Tooltip id="valuation" />
-
-              {/* 👇 ここが追加した部分：24h変動率の表示 */}
               {coin.price_change_percentage_24h !== undefined && (
                 <p
                   className={`text-sm mt-1 ${
@@ -97,6 +102,21 @@ export default function PortfolioCoinList({
             </Card>
           )
         })}
+
+        {/* ✅ Tooltip を map の外に1回だけ配置！ */}
+        <Tooltip
+          id="global-tooltip"
+          place="top"
+          style={{
+            backgroundColor: '#333',
+            color: '#fff',
+            borderRadius: '6px',
+            fontSize: '12px',
+            padding: '6px 10px',
+            maxWidth: '220px',
+            whiteSpace: 'pre-wrap',
+          }}
+        />
       </div>
     </div>
   )

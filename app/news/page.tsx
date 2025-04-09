@@ -1,5 +1,6 @@
 // app/news/page.tsx
 import { getSavedNews } from '@/lib/api/news'
+import NewsCard from '@/components/news/NewsCard'
 
 export default async function NewsPage() {
   const news = await getSavedNews()
@@ -11,28 +12,7 @@ export default async function NewsPage() {
       {news.length === 0 ? (
         <p className="text-gray-500">ニュースがまだ保存されていません。</p>
       ) : (
-        news.map((item) => (
-          <div key={item.url} className="border rounded p-4 space-y-1">
-            <h2 className="font-semibold text-lg">{item.title}</h2>
-
-            <p className="text-sm text-gray-500">
-              {item.source} | {new Date(item.publishedAt).toLocaleString()}
-            </p>
-
-            {item.summary && (
-              <p className="text-gray-700 text-sm">📝 要約: {item.summary}</p>
-            )}
-
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 text-sm underline inline-block mt-1"
-            >
-              記事を読む
-            </a>
-          </div>
-        ))
+        news.map((item) => <NewsCard key={item.url} article={item} />)
       )}
     </div>
   )

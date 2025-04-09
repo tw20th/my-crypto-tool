@@ -8,6 +8,7 @@ import './globals.css'
 import ThemeWrapper from '@/components/ThemeWrapper'
 import { Toaster } from 'react-hot-toast'
 import Script from 'next/script'
+import TooltipProvider from '@/components/TooltipProvider' // 追加
 
 const geistSans = localFont({
   src: '/fonts/GeistVF.woff', // 修正後のパス
@@ -22,8 +23,29 @@ const geistMono = localFont({
 })
 
 export const metadata: Metadata = {
-  title: 'My Crypto Tool',
-  description: 'ポートフォリオ管理とアラート通知ができるアプリ',
+  title: 'My Crypto Tool | 仮想通貨のポートフォリオ管理＆アラート',
+  description:
+    '仮想通貨の価格をチェックしながら資産を管理できるアプリです。Googleログインで簡単に使えます。',
+  openGraph: {
+    title: 'My Crypto Tool',
+    description:
+      'ポートフォリオとアラート通知を1つに。仮想通貨資産をスマートに管理！',
+    url: 'https://your-domain.com',
+    images: [
+      {
+        url: 'https://your-domain.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'My Crypto ToolのOGP画像',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'My Crypto Tool',
+    description: '仮想通貨をスマートに管理しよう！',
+    images: ['https://your-domain.com/og-image.png'],
+  },
 }
 
 export default function RootLayout({
@@ -39,7 +61,7 @@ export default function RootLayout({
         <ThemeWrapper>
           <Toaster position="top-right" />
           {children}
-
+          <TooltipProvider /> {/* 👈 グローバルに一度だけ表示 */}
           {/* Google Analytics を body 内に明示的に挿入 */}
           <Script
             strategy="afterInteractive"
