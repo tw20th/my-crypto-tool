@@ -14,7 +14,7 @@ export async function POST() {
   try {
     // ✅ GPTへプロンプトを送信
     const chat = await openai.chat.completions.create({
-      model: 'gpt-4', // 'gpt-3.5-turbo' でもOK
+      model: 'gpt-3.5-turbo', // ←ここを変更
       messages: [
         {
           role: 'system',
