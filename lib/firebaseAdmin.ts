@@ -10,7 +10,10 @@ const serviceAccount: ServiceAccount = {
 
 export const adminApp =
   getApps().length === 0
-    ? initializeApp({ credential: cert(serviceAccount) })
+    ? initializeApp({
+        credential: cert(serviceAccount),
+        projectId: serviceAccount.projectId, // ← 👈 ここが重要！
+      })
     : getApps()[0]
 
 export const adminDb = getFirestore(adminApp)
