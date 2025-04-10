@@ -1,3 +1,4 @@
+// ✅ lib/firebaseAdmin.ts のように統一して使う
 import { initializeApp, cert, getApps } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 import type { ServiceAccount } from 'firebase-admin'
@@ -12,7 +13,7 @@ export const adminApp =
   getApps().length === 0
     ? initializeApp({
         credential: cert(serviceAccount),
-        projectId: serviceAccount.projectId, // ← 👈 ここが重要！
+        projectId: serviceAccount.projectId,
       })
     : getApps()[0]
 

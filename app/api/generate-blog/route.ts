@@ -1,6 +1,6 @@
 // app/api/generate-blog/route.ts
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/firebase-admin'
+import { adminDb as db } from '@/lib/firebaseAdmin'
 import OpenAI from 'openai'
 
 const openai = new OpenAI({

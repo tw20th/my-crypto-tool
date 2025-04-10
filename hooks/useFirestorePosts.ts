@@ -1,5 +1,5 @@
 // hooks/useFirestorePosts.ts
-import { db } from '@/lib/firebase-admin'
+import { adminDb as db } from '@/lib/firebaseAdmin'
 
 // ✅ Firestore Admin SDK を使って記事一覧取得
 export async function fetchAllPosts() {
