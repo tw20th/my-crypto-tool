@@ -1,19 +1,23 @@
-// ✅ lib/firebaseAdmin.ts のように統一して使う
+// lib/firebaseAdmin.ts
 import { initializeApp, cert, getApps } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
-import type { ServiceAccount } from 'firebase-admin'
 
-const serviceAccount: ServiceAccount = {
-  projectId: process.env.FIREBASE_ADMIN_PROJECT_ID!,
-  clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL!,
-  privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+if (!process.env.FIREBASE_ADMIN_KEY_BASE64) {
+  throw new Error('FIREBASE_ADMIN_KEY_BASE64 is not set')
 }
+
+// 🔽 base64 を decode → JSON parse
+const decoded = Buffer.from(
+  process.env.FIREBASE_ADMIN_KEY_BASE64,
+  'base64'
+).toString('utf8')
+const serviceAccount = JSON.parse(decoded)
 
 export const adminApp =
   getApps().length === 0
     ? initializeApp({
         credential: cert(serviceAccount),
-        projectId: serviceAccount.projectId,
+        projectId: serviceAccount.project_id,
       })
     : getApps()[0]
 
