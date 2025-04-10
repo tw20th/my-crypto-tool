@@ -1,8 +1,9 @@
 // app/api/og/[id]/route.tsx
+
+export const runtime = 'nodejs'
+
 import { ImageResponse } from '@vercel/og'
 import { fetchPostById } from '@/hooks/useFirestorePosts'
-
-export const runtime = 'edge' // ← required
 
 export async function GET(
   req: Request,

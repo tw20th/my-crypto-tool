@@ -1,62 +1,48 @@
-// app/api/summarize-news/route.ts
-
+// app/api/save-news/route.ts
 import { NextResponse } from 'next/server'
 import { adminDb } from '@/lib/firebaseAdmin'
-import OpenAI from 'openai'
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
+import { fetchCryptoNews } from '@/lib/api/news'
 
 export async function POST() {
   try {
-    console.log('📡 /api/summarize-news 実行開始')
+    const news = await fetchCryptoNews()
 
-    const snapshot = await adminDb
-      .collection('news')
-      .orderBy('publishedAt', 'desc')
-      .limit(10)
-      .get()
+    const batch = adminDb.batch()
+    let savedCount = 0
 
-    let updatedCount = 0
+    for (const article of news) {
+      // ✅ 重複チェック（同じURLがすでに存在するか）
+      const existing = await adminDb
+        .collection('news')
+        .where('url', '==', article.url)
+        .get()
 
-    for (const doc of snapshot.docs) {
-      const data = doc.data()
-
-      console.log('🔍 記事ID:', doc.id)
-      console.log('📰 タイトル:', data.title)
-      console.log('🟡 summary フィールド:', data.summary)
-
-      if ('summary' in data) {
-        console.log('⛔ summary すでに存在 → スキップ')
+      if (!existing.empty) {
+        console.log('⏭️ 重複スキップ:', article.title)
         continue
       }
 
-      const prompt = `以下の仮想通貨ニュースの内容を、初心者にもわかりやすく、やさしい日本語で3文以内に要約してください。\n\nタイトル: ${data.title}`
-
-      const response = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: prompt }],
+      // ✅ 新規保存
+      const ref = adminDb.collection('news').doc()
+      batch.set(ref, {
+        id: ref.id,
+        title: article.title,
+        url: article.url,
+        publishedAt: article.publishedAt,
+        source: article.source,
       })
 
-      const summary = response.choices[0]?.message?.content?.trim()
-
-      if (!summary) {
-        console.log('⚠️ 要約が取得できませんでした。スキップ')
-        continue
-      }
-
-      await doc.ref.update({ summary })
-      updatedCount++
-      console.log(`✅ summary 保存完了 (${updatedCount} 件目)`)
+      savedCount++
     }
 
+    await batch.commit()
+
     return NextResponse.json({
-      message: '✅ 要約処理完了',
-      updatedCount,
+      message: '✅ ニュースを保存しました',
+      savedCount,
     })
   } catch (e) {
-    console.error('🔥 要約処理エラー:', e)
+    console.error('🔥 ニュース保存失敗:', e)
     return new NextResponse(JSON.stringify({ error: String(e) }), {
       status: 500,
     })
