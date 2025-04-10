@@ -17,3 +17,4 @@ export default async function NewsPage() {
     </div>
   )
 }
+export const dynamic = 'force-dynamic'
