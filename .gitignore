@@ -49,3 +49,4 @@ firestore.*
 key.txt
 key-escaped.txt
 convert-private-key.ts
+serviceAccountKey.json
