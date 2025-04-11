@@ -1,6 +1,6 @@
 // lib/firebase.ts
 import { initializeApp, getApps, getApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth' // 👈 追加
 import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -12,7 +12,12 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 }
 
-// ✅ app を一度だけ定義して export！
 export const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
 export const auth = getAuth(app)
+
+// ✅ 永続性をブラウザに設定（初回のみ）
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.error('🔥 Firebase persistence error:', error)
+})
+
 export const db = getFirestore(app)

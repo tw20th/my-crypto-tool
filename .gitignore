@@ -45,10 +45,3 @@ firestore.*
 .env.production
 .env.development
 
-# secret key tools
-key.txt
-key-escaped.txt
-convert-private-key.ts
-serviceAccountKey.json
-serviceAccountKey.base64.txt
-escaped-key.txt

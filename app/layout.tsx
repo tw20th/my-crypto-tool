@@ -1,23 +1,20 @@
-// ❌ remove this if present
-// 'use client'
-
-// layout.tsx
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
-import ThemeWrapper from '@/components/ThemeWrapper'
 import { Toaster } from 'react-hot-toast'
 import Script from 'next/script'
-import TooltipProvider from '@/components/TooltipProvider' // 追加
+import TooltipProvider from '@/components/TooltipProvider'
+import Navbar from '@/components/Navbar' // ✅ 追加
+import { UserProvider } from '@/lib/UserContext' // 👈 追加
 
 const geistSans = localFont({
-  src: '/fonts/GeistVF.woff', // 修正後のパス
+  src: '/fonts/GeistVF.woff',
   variable: '--font-geist-sans',
   weight: '100 900',
 })
 
 const geistMono = localFont({
-  src: '/fonts/GeistMonoVF.woff', // 修正後のパス
+  src: '/fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   weight: '100 900',
 })
@@ -58,11 +55,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900 dark:bg-gray-100`}
       >
-        <ThemeWrapper>
+        <UserProvider>
+          {' '}
+          {/* ✅ ユーザープロバイダー開始 */}
+          <Navbar />
           <Toaster position="top-right" />
           {children}
-          <TooltipProvider /> {/* 👈 グローバルに一度だけ表示 */}
-          {/* Google Analytics を body 内に明示的に挿入 */}
+          <TooltipProvider />
+          {/* ✅ Google Analytics スクリプト */}
           <Script
             strategy="afterInteractive"
             src="https://www.googletagmanager.com/gtag/js?id=G-XN76S896WT"
@@ -72,14 +72,15 @@ export default function RootLayout({
             strategy="afterInteractive"
             dangerouslySetInnerHTML={{
               __html: `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XN76S896WT');
-      `,
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-XN76S896WT');
+              `,
             }}
           />
-        </ThemeWrapper>
+        </UserProvider>{' '}
+        {/* ✅ プロバイダー終了 */}
       </body>
     </html>
   )

@@ -1,12 +1,17 @@
-// app/page.tsx（トップページ）
 'use client'
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  setPersistence,
+  browserLocalPersistence, // ✅ 追加
+} from 'firebase/auth'
 import { app } from '@/lib/firebase'
 import { useRouter } from 'next/navigation'
 import PortfolioDemo from '@/components/Portfolio/PortfolioDemo'
 import PortfolioAlertDemo from '@/components/Portfolio/PortfolioAlertDemo'
-import Button from '@/components/ui/Button' // ← 追加！
+import Button from '@/components/ui/Button'
 
 export default function Home() {
   const router = useRouter()
@@ -16,6 +21,7 @@ export default function Home() {
     const provider = new GoogleAuthProvider()
 
     try {
+      await setPersistence(auth, browserLocalPersistence) // ✅ 先に設定！
       await signInWithPopup(auth, provider)
       router.push('/portfolio')
     } catch (error) {

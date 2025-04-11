@@ -10,18 +10,19 @@ export default function ThemeWrapper({
   const [isDark, setIsDark] = useState(false)
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark)
+    // <body> に直接 class を付ける（App Router 対応）
+    document.body.classList.toggle('dark', isDark)
   }, [isDark])
 
   return (
-    <div className="p-4">
+    <>
       <button
         onClick={() => setIsDark((prev) => !prev)}
-        className="mb-4 px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-sm"
+        className="fixed top-4 left-4 px-4 py-2 z-50 rounded bg-gray-200 dark:bg-gray-700 text-sm"
       >
         {isDark ? '☀️ ライトモード' : '🌙 ダークモード'}
       </button>
       {children}
-    </div>
+    </>
   )
 }
