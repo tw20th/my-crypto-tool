@@ -1,7 +1,7 @@
 // app/portfolio/page.tsx
 
 import { fetchTopCoins } from '@/lib/api/coingecko'
-import PortfolioClient from '@/components/Portfolio/PortfolioClient'
+import PortfolioPageWrapper from '@/components/Portfolio/PortfolioPageWrapper' // ✅ 差し替え！
 
 export default async function PortfolioPage() {
   const coins = await fetchTopCoins()
@@ -9,7 +9,7 @@ export default async function PortfolioPage() {
   return (
     <main className="p-6">
       <h1 className="text-2xl font-bold mb-4">ポートフォリオ</h1>
-      <PortfolioClient coins={coins} />
+      <PortfolioPageWrapper coins={coins} /> {/* ✅ ラップして使う */}
     </main>
   )
 }

@@ -12,32 +12,56 @@ export async function POST() {
   const date = today.toISOString().split('T')[0]
 
   try {
-    // ✅ GPTへプロンプトを送信
+    // ✅ GPTへプロンプトを送信（SEO対応）
     const chat = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo', // ←ここを変更
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
-          content: 'あなたは仮想通貨専門の日本語ブロガーです。',
+          content: 'あなたは仮想通貨とSEOに詳しいプロの日本語ブロガーです。',
         },
         {
           role: 'user',
-          content: `今週のビットコイン、イーサリアム、XRPなどの仮想通貨市場の動向を、初心者にもわかりやすくブログ記事として800文字ほどでまとめてください。冒頭にはタイトル案も入れてください。`,
+          content: `
+      【目的】
+      仮想通貨のSEO向けブログ記事を自動生成したいです。
+      
+      【内容】
+      - 今週のビットコイン、イーサリアム、XRPの価格動向（仮の数値でも構わないので具体的な数字を含めて）
+      - 影響を与えたニュース（米国の規制、中国の市場、NFTなど）
+      - 初心者にも理解できるやさしい言葉
+      - 約1000文字の読みやすい記事
+      - 以下のキーワードを含める：「仮想通貨」「ビットコイン」「価格変動」「投資」「ポートフォリオ」
+      
+      【構成】
+      1. SEOを意識した魅力的なタイトル（例：「2025年4月第2週の仮想通貨トレンド」）
+      2. 見出しを含む構造（Markdown形式で ## を使う）
+      3. 冒頭に150文字以内の要約（descriptionに使う）
+      
+      【出力形式】
+      - タイトル（1行目）
+      - 要約
+      - 本文（Markdown形式）
+      - 数値が伏せられないように、必ず価格などの数値を含めてください。
+      `,
         },
       ],
     })
 
     const content = chat.choices[0].message.content || '生成失敗しました'
 
-    // ✅ タイトルと本文に分割（タイトルを1行目として想定）
-    const [titleLine, ...bodyLines] = content.split('\n').filter(Boolean)
-    const title = titleLine.replace(/^#+\s*/, '') // 見出し記号を消す
+    // ✅ タイトル、要約、本文に分割
+    const [titleLine, summaryLine, ...bodyLines] = content
+      .split('\n')
+      .filter(Boolean)
+    const title = titleLine.replace(/^#+\s*/, '') // 見出し記号を削除
+    const description = summaryLine.replace(/^#+\s*/, '') // 要約をdescriptionへ
     const body = bodyLines.join('\n')
 
     const article = {
       title,
       date,
-      description: '今週の仮想通貨動向をGPTが自動まとめ！',
+      description,
       body,
       tags: ['自動生成', '仮想通貨', 'AI'],
       category: '自動要約',

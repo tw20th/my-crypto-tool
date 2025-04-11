@@ -6,13 +6,13 @@ import { useUser } from '@/lib/UserContext'
 
 export default function Navbar() {
   const [isDark, setIsDark] = useState(false)
-  const { user, loading } = useUser() // ✅ 一度だけ呼ぶ！
+  const { user, loading } = useUser()
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark)
   }, [isDark])
 
-  // ✅ Firebaseの状態確認中は何も描画しない
+  // ✅ ログイン状態が不明なうちは何も表示しない
   if (loading) return null
 
   return (
@@ -25,7 +25,7 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-3">
-        {user ? (
+        {user && user.email ? (
           <span className="text-sm text-gray-700 dark:text-gray-300">
             👤 {user.displayName ?? 'ログイン中'}
           </span>

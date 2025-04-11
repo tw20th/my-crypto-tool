@@ -5,23 +5,34 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   setPersistence,
-  browserLocalPersistence, // ✅ 追加
+  browserLocalPersistence,
 } from 'firebase/auth'
 import { app } from '@/lib/firebase'
+
 import { useRouter } from 'next/navigation'
 import PortfolioDemo from '@/components/Portfolio/PortfolioDemo'
 import PortfolioAlertDemo from '@/components/Portfolio/PortfolioAlertDemo'
 import Button from '@/components/ui/Button'
+import { useUser } from '@/lib/UserContext' // ✅ ここから取得
 
 export default function Home() {
+  const { user, loading } = useUser() // ✅ useAuth → useUser に修正
   const router = useRouter()
+
+  if (loading) {
+    return <p className="text-center mt-10">ログイン状態を確認中...</p>
+  }
+
+  if (user) {
+    router.push('/portfolio')
+    return null
+  }
 
   const handleLogin = async () => {
     const auth = getAuth(app)
     const provider = new GoogleAuthProvider()
-
     try {
-      await setPersistence(auth, browserLocalPersistence) // ✅ 先に設定！
+      await setPersistence(auth, browserLocalPersistence)
       await signInWithPopup(auth, provider)
       router.push('/portfolio')
     } catch (error) {
