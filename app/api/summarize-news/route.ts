@@ -3,7 +3,15 @@ import { NextResponse } from 'next/server'
 import { adminDb } from '@/lib/firebaseAdmin'
 import { fetchCryptoNews } from '@/lib/api/news'
 
-export async function POST() {
+export async function POST(req: Request) {
+  const secret = req.headers.get('x-api-key')
+  if (secret !== process.env.NEWS_API_SECRET) {
+    return NextResponse.json(
+      { message: '🔐 認証に失敗しました（news）' },
+      { status: 401 }
+    )
+  }
+
   try {
     const news = await fetchCryptoNews()
 

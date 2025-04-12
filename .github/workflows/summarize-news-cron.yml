@@ -3,7 +3,7 @@ name: Summarize News Cron
 on:
   schedule:
     - cron: '0 23 * * *' # JSTの8時 = UTCの23時
-  workflow_dispatch: # 手動でトリガーするオプションも追加
+  workflow_dispatch:
 
 jobs:
   summarize-news:
@@ -13,6 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Run summarize-news API
+      - name: Run summarize-news API with secret key
         run: |
-          curl -X POST https://my-crypto-tool.vercel.app/api/summarize-news
+          curl -X POST https://my-crypto-tool.vercel.app/api/summarize-news \
+            -H "x-api-key: ${{ secrets.NEWS_API_SECRET }}"

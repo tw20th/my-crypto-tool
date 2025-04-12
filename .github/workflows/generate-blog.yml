@@ -1,15 +1,16 @@
 # .github/workflows/generate-blog.yml
-name: Generate Blog Article
+name: Generate Weekly Blog
 
 on:
   schedule:
-    - cron: '0 1 * * *' # 毎日10:00 JST（=1:00 UTC）に実行
-  workflow_dispatch: # 手動トリガーもできるように
+    - cron: '0 9 * * 5' # 毎週金曜の18時 (JST)
+  workflow_dispatch:
 
 jobs:
-  generate:
+  generate-blog:
     runs-on: ubuntu-latest
     steps:
-      - name: Call generate-blog API
+      - name: Generate Blog
         run: |
-          curl -X POST https://my-crypto-tool.vercel.app/api/generate-blog
+          curl -X POST https://my-crypto-tool.vercel.app/api/generate-blog \
+            -H "x-api-key: ${{ secrets.BLOG_API_SECRET }}"
