@@ -6,3 +6,4 @@ export type PortfolioHistory = {
   createdAt: Timestamp
   totalValue: number
 }
+export type FilterType = 'all' | 'positive' | 'negative'

@@ -7,12 +7,20 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-export async function POST() {
-  const today = new Date()
-  const date = today.toISOString().split('T')[0]
+export async function POST(req: Request) {
+  const secret = req.headers.get('x-api-key')
+
+  if (secret !== process.env.BLOG_API_SECRET) {
+    return NextResponse.json(
+      { message: '🔐 認証に失敗しました' },
+      { status: 401 }
+    )
+  }
 
   try {
     // ✅ GPTへプロンプトを送信（SEO対応）
+    const today = new Date()
+    const date = today.toISOString().split('T')[0] // ✅ try内に移動！
     const chat = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [

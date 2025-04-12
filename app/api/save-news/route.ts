@@ -3,30 +3,52 @@ import { NextResponse } from 'next/server'
 import { adminDb } from '@/lib/firebaseAdmin'
 import { fetchCryptoNews } from '@/lib/api/news'
 
-export async function POST() {
+export async function POST(req: Request) {
+  // 🔐 認証チェック
+  const secret = req.headers.get('x-api-key')
+  if (secret !== process.env.NEWS_API_SECRET) {
+    return NextResponse.json(
+      { message: '🔐 認証に失敗しました（news）' },
+      { status: 401 }
+    )
+  }
+
   try {
     const news = await fetchCryptoNews()
 
     const batch = adminDb.batch()
+    let savedCount = 0
 
     for (const article of news) {
-      const { title, url, publishedAt, source } = article
+      // ✅ 重複チェック（同じURLがすでに存在するか）
+      const existing = await adminDb
+        .collection('news')
+        .where('url', '==', article.url)
+        .get()
+
+      if (!existing.empty) {
+        console.log('⏭️ 重複スキップ:', article.title)
+        continue
+      }
+
+      // ✅ 新規保存
       const ref = adminDb.collection('news').doc()
       batch.set(ref, {
         id: ref.id,
-        title,
-        url,
-        publishedAt,
-        source,
-        // 🔥 summary をあえて含めない！これが超重要
+        title: article.title,
+        url: article.url,
+        publishedAt: article.publishedAt,
+        source: article.source,
       })
+
+      savedCount++
     }
 
     await batch.commit()
 
     return NextResponse.json({
       message: '✅ ニュースを保存しました',
-      count: news.length,
+      savedCount,
     })
   } catch (e) {
     console.error('🔥 ニュース保存失敗:', e)

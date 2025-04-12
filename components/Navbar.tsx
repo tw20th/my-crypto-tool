@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useUser } from '@/lib/UserContext'
+import { getAuth, signOut } from 'firebase/auth'
+import { app } from '@/lib/firebase'
 
 export default function Navbar() {
   const [isDark, setIsDark] = useState(false)
@@ -17,7 +19,7 @@ export default function Navbar() {
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-800 shadow">
-      <div className="flex gap-6">
+      <div className="flex gap-6 text-gray-800 dark:text-gray-100">
         <Link href="/">ホーム</Link>
         <Link href="/news">ニュース</Link>
         <Link href="/blog">ブログ</Link>
@@ -26,9 +28,21 @@ export default function Navbar() {
 
       <div className="flex items-center gap-3">
         {user && user.email ? (
-          <span className="text-sm text-gray-700 dark:text-gray-300">
-            👤 {user.displayName ?? 'ログイン中'}
-          </span>
+          <>
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              👤 {user.displayName ?? 'ログイン中'}
+            </span>
+            <button
+              onClick={async () => {
+                const auth = getAuth(app)
+                await signOut(auth)
+                window.location.reload() // 状態リフレッシュ用
+              }}
+              className="text-sm text-red-600 dark:text-red-400 underline"
+            >
+              ログアウト
+            </button>
+          </>
         ) : (
           <Link
             href="/login"
